@@ -91,7 +91,8 @@ export function ProviderForm({
   const isEditing = !!provider
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       name: provider?.name || '',
       slug: provider?.slug || '',

@@ -3,6 +3,7 @@ import { ChevronRight, Search } from 'lucide-react'
 import { ProviderGrid } from '@/components/providers/ProviderGrid'
 import { CategoryCard } from '@/components/categories/CategoryCard'
 import { createClient } from '@/lib/supabase/server'
+import type { Category, Provider } from '@/types/database'
 import type { Metadata } from 'next'
 
 interface PageProps {
@@ -20,7 +21,9 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   }
 }
 
-async function searchProviders(query: string) {
+// ... imports
+
+async function searchProviders(query: string): Promise<Provider[]> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -40,10 +43,10 @@ async function searchProviders(query: string) {
     return []
   }
 
-  return data
+  return data || []
 }
 
-async function searchCategories(query: string) {
+async function searchCategories(query: string): Promise<Category[]> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -57,7 +60,7 @@ async function searchCategories(query: string) {
     return []
   }
 
-  return data
+  return data || []
 }
 
 export default async function SearchPage({ searchParams }: PageProps) {
