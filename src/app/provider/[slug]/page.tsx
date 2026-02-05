@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { ProviderProfile } from '@/components/providers/ProviderProfile'
+import { LocalBusinessJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd'
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import type { Provider, Category, Service, Review, Industry } from '@/types/database'
@@ -121,8 +122,20 @@ export default async function ProviderPage({ params }: PageProps) {
 
   const primaryCategory = categories[0]
 
+  // Build breadcrumb items for JSON-LD
+  const breadcrumbItems = [
+    { name: 'Home', href: '/' },
+    ...(primaryCategory
+      ? [{ name: primaryCategory.name, href: `/${primaryCategory.slug}` }]
+      : []),
+    { name: provider.name, href: `/provider/${provider.slug}` },
+  ]
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <LocalBusinessJsonLd provider={provider} reviews={reviewsData.reviews} />
+      <BreadcrumbJsonLd items={breadcrumbItems} />
+
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
         <Link href="/" className="hover:text-primary">

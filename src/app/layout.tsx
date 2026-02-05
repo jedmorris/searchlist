@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Toaster } from '@/components/ui/toaster'
 import { SITE_CONFIG } from '@/lib/constants'
+import { SavedProvidersProvider } from '@/contexts/SavedProvidersContext'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -66,10 +67,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Toaster />
+        <SavedProvidersProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Toaster />
+        </SavedProvidersProvider>
       </body>
     </html>
   )

@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FAQPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -121,9 +122,25 @@ const faqSections = [
   },
 ]
 
+// Flatten all FAQ questions for JSON-LD
+const allQuestions = faqSections.flatMap((section) =>
+  section.questions.map((q) => ({
+    question: q.q,
+    answer: q.a,
+  }))
+)
+
 export default function FAQPage() {
   return (
     <div className="container mx-auto px-4 py-8">
+      <FAQPageJsonLd questions={allQuestions} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', href: '/' },
+          { name: 'FAQ', href: '/faq' },
+        ]}
+      />
+
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
         <Link href="/" className="hover:text-primary">

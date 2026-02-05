@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { StarRatingDisplay } from '@/components/reviews/StarRating'
+import { SaveButton } from '@/components/providers/SaveButton'
 import { formatDealSizeRange } from '@/lib/constants'
 import type { Provider, Category } from '@/types/database'
 
@@ -19,9 +20,10 @@ interface ProviderCardProps {
     featured_review?: FeaturedReview | null
   }
   showReviewQuote?: boolean
+  showSaveButton?: boolean
 }
 
-export function ProviderCard({ provider, showReviewQuote = true }: ProviderCardProps) {
+export function ProviderCard({ provider, showReviewQuote = true, showSaveButton = true }: ProviderCardProps) {
   const initials = provider.name
     .split(' ')
     .map((n) => n[0])
@@ -40,8 +42,13 @@ export function ProviderCard({ provider, showReviewQuote = true }: ProviderCardP
 
   return (
     <Link href={`/provider/${provider.slug}`}>
-      <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+      <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative group">
         <CardContent className="p-6">
+          {showSaveButton && (
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <SaveButton providerId={provider.id} />
+            </div>
+          )}
           <div className="flex items-start space-x-4">
             <Avatar className="h-14 w-14">
               <AvatarImage src={provider.headshot_url || undefined} alt={provider.name} />

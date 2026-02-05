@@ -53,10 +53,12 @@
 | Homepage Testimonials | Yes | Yes | - |
 | "Most Reviewed" Sections | Yes | Yes | - |
 | Blog/Content | No | Yes | Gap |
-| FAQ Page | No | Yes | Gap |
+| FAQ Page | Yes | Yes | - |
 | Industry Subcategories | Yes | Yes | - |
 | Email Notifications | Yes | Likely | - |
 | Provider Count Display | Yes | Yes | - |
+| Saved Providers | Yes | Yes | - |
+| SEO/Structured Data | Yes | Likely | - |
 
 ---
 
@@ -192,18 +194,34 @@ Show "Similar Providers" on profile page based on category, location, services.
 | # | Feature | Impact | Effort | Status |
 |---|---------|--------|--------|--------|
 | 3.1 | Blog/Resources Section | Medium | Medium | Backlog |
-| 3.2 | FAQ Page | Low-Medium | Low | Backlog |
-| 3.3 | SEO Optimizations | Medium | Low | Backlog |
+| 3.2 | FAQ Page | Low-Medium | Low | **Complete** |
+| 3.3 | SEO Optimizations | Medium | Low | **Complete** |
 | 3.4 | Provider Case Studies | Medium | Medium | Backlog |
 
 #### 3.1 Blog/Resources Section
 Create `/blog` with articles about ETA, due diligence, choosing advisors. Improves SEO.
 
-#### 3.2 FAQ Page
+#### 3.2 FAQ Page ✅ COMPLETE
 Common questions for buyers/sellers and providers. Reduces support burden.
 
-#### 3.3 SEO Optimizations
+**Implemented:**
+- `/faq` page with 4 organized sections (Buyers, Providers, ETA Info, Technical)
+- Accordion UI for expandable Q&A
+- FAQ schema markup (JSON-LD) for SEO
+- Breadcrumb navigation
+- Contact support CTA
+- Added FAQ link to site navigation
+
+#### 3.3 SEO Optimizations ✅ COMPLETE
 Add JSON-LD structured data, review schema markup, improved meta descriptions, sitemap.
+
+**Implemented:**
+- JSON-LD components: OrganizationJsonLd, WebsiteJsonLd, LocalBusinessJsonLd, FAQPageJsonLd, BreadcrumbJsonLd, ItemListJsonLd
+- Sitemap generation (`/sitemap.xml`) with all pages, categories, and providers
+- Robots.txt configuration with sitemap reference
+- Provider pages include review schema with aggregate ratings
+- Homepage includes Organization and Website structured data
+- FAQ page includes FAQPage schema for rich snippets
 
 #### 3.4 Provider Case Studies
 Dedicated pages for top providers with in-depth profiles. Premium feature for higher tiers.
@@ -262,7 +280,7 @@ Enable boost purchase buttons (currently "Coming Soon"). Spotlight, Homepage Fea
 | # | Feature | Impact | Effort | Status |
 |---|---------|--------|--------|--------|
 | 7.1 | Provider Comparison Tool | High | Medium | Backlog |
-| 7.2 | Saved Providers / Favorites | Medium-High | Low | Backlog |
+| 7.2 | Saved Providers / Favorites | Medium-High | Low | **Complete** |
 | 7.3 | Provider Availability Calendar | Medium | Medium | Backlog |
 | 7.4 | Review Response System | Medium | Low | Backlog |
 | 7.5 | Weekly Digest Emails | Medium | Low | Backlog |
@@ -273,8 +291,17 @@ Enable boost purchase buttons (currently "Coming Soon"). Spotlight, Homepage Fea
 #### 7.1 Provider Comparison Tool
 Side-by-side comparison of 2-4 providers. Compare deal size ranges, services, ratings, location, experience. Common in B2B directories.
 
-#### 7.2 Saved Providers / Favorites
+#### 7.2 Saved Providers / Favorites ✅ COMPLETE
 Allow users to save providers to a list (localStorage or auth-gated). Quick shortlist for later inquiry. Very common UX pattern.
+
+**Implemented:**
+- SavedProvidersContext with localStorage persistence
+- SaveButton component with heart icon (hover reveal on cards)
+- `/saved` page to view all saved providers
+- Batch API endpoint (`/api/providers/batch`) for fetching multiple providers
+- "Saved" link in navigation header
+- Clear all functionality
+- Empty state with CTA to browse providers
 
 #### 7.3 Provider Availability Calendar
 Providers can indicate their current availability/capacity. Shows "Taking new clients" vs "Booked until Q2" status. Helps users avoid dead-end inquiries.
@@ -311,30 +338,37 @@ Let providers embed their Search List profile/reviews on their own website. Widg
 
 ---
 
+### ✅ COMPLETED PHASE 2
+
+#### Phase 2: Quick Wins & Polish (DONE)
+- [x] 3.2 FAQ Page *(closes competitive gap)*
+- [x] 3.3 SEO Optimizations *(JSON-LD, sitemap)*
+- [x] 7.2 Saved Providers / Favorites *(high UX value)*
+
+---
+
 ### 🎯 RECOMMENDED NEXT PHASE
 
-#### Phase 2: Quick Wins & Polish (Recommended)
-- [ ] 3.2 FAQ Page *(closes competitive gap)*
-- [ ] 3.3 SEO Optimizations *(JSON-LD, sitemap)*
+#### Phase 3: Engagement & Revenue (Recommended)
 - [ ] 2.3 Improved Pagination
-- [ ] 7.2 Saved Providers / Favorites *(high UX value)*
 - [ ] 4.2 Portal Onboarding Flow
 - [ ] 6.1 Activate Feature Boosts *(revenue)*
-
-#### Phase 3: Engagement & Growth
-- [ ] 2.4 Related Providers
 - [ ] 7.4 Review Response System
 - [ ] 7.5 Weekly Digest Emails
+
+#### Phase 4: Enhanced Discovery
+- [ ] 2.3 Improved Pagination
+- [ ] 2.4 Related Providers
 - [ ] 4.1 Provider Analytics Dashboard
 - [ ] 7.1 Provider Comparison Tool
 
-#### Phase 4: Premium Features
+#### Phase 5: Premium Features
 - [ ] 7.7 Deal Flow Tracking
 - [ ] 3.1 Blog/Resources Section
 - [ ] 7.3 Provider Availability Calendar
 - [ ] 5.2 Client Accounts
 
-#### Phase 5: Future / Scale
+#### Phase 6: Future / Scale
 - [ ] 5.3 In-App Messaging
 - [ ] 7.8 Provider API/Embed Widget
 - [ ] 3.4 Provider Case Studies

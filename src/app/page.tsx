@@ -6,6 +6,7 @@ import { Typewriter } from '@/components/home/Typewriter'
 import { TestimonialsSection, type TestimonialData } from '@/components/home/TestimonialsSection'
 import { TopProvidersSection, type TopProviderData } from '@/components/home/TopProvidersSection'
 import { QuizCTA } from '@/components/quiz/QuizCTA'
+import { OrganizationJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd'
 import { createClient } from '@/lib/supabase/server'
 import type { Category, Provider } from '@/types/database'
 
@@ -248,6 +249,9 @@ export default async function HomePage() {
 
   return (
     <div>
+      <OrganizationJsonLd />
+      <WebsiteJsonLd />
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-primary/5 to-background py-20 md:py-28">
         <div className="container mx-auto px-4">

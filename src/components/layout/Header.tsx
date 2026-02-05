@@ -12,7 +12,8 @@ import { SearchBar } from '@/components/forms/SearchBar'
 const navigation = [
   { name: 'Find My Match', href: '/quiz', highlight: true },
   { name: 'Browse Services', href: '/#categories' },
-  { name: 'About', href: '/about' },
+  { name: 'Saved', href: '/saved' },
+  { name: 'FAQ', href: '/faq' },
 ]
 
 export function Header() {
