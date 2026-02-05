@@ -69,7 +69,7 @@ export default function AdminBlogPage() {
       } else {
         throw new Error('Failed to delete')
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete post',
@@ -98,7 +98,7 @@ export default function AdminBlogPage() {
           title: post.is_published ? 'Post unpublished' : 'Post published',
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update post',
@@ -125,7 +125,7 @@ export default function AdminBlogPage() {
           title: post.is_featured ? 'Removed from featured' : 'Marked as featured',
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update post',
