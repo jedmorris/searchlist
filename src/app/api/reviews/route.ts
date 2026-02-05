@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { sendNewReviewNotification, sendReviewAdminNotification } from '@/lib/email'
 
 export async function POST(request: Request) {
   try {
@@ -31,14 +32,16 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if provider exists
-    const { data: provider } = await supabase
-      .from('providers')
-      .select('id')
+    // Check if provider exists and get details for notification
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: providerResult } = await (supabase.from('providers') as any)
+      .select('id, name, email, slug')
       .eq('id', provider_id)
       .single()
 
-    if (!provider) {
+    const providerData = providerResult as { id: string; name: string; email: string; slug: string } | null
+
+    if (!providerData) {
       return NextResponse.json(
         { error: 'Provider not found' },
         { status: 404 }
@@ -68,6 +71,27 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
+
+    // Send email notifications
+    const emailData = {
+      providerName: providerData.name,
+      providerEmail: providerData.email,
+      providerSlug: providerData.slug,
+      reviewerName: author_name,
+      rating,
+      title,
+      content,
+    }
+
+    // Notify provider of new review
+    sendNewReviewNotification(emailData).catch((err) => {
+      console.error('Failed to send review notification to provider:', err)
+    })
+
+    // Notify admin of pending review
+    sendReviewAdminNotification(emailData).catch((err) => {
+      console.error('Failed to send review notification to admin:', err)
+    })
 
     return NextResponse.json({ review })
   } catch (error) {

@@ -25,6 +25,7 @@
 - [x] **Search Autocomplete** component
 - [x] **Search Filters** component
 - [x] **Quiz/Matching Tool** (multi-step quiz, provider matching, lead capture, admin dashboard)
+- [x] **Email Notifications** (inquiries, reviews, invitations, quiz leads)
 
 ---
 
@@ -49,7 +50,7 @@
 | Blog/Content | No | Yes | Gap |
 | FAQ Page | No | Yes | Gap |
 | Industry Subcategories | Partial | Yes | Gap |
-| **Email Notifications** | **No** | **Likely** | **Gap** |
+| Email Notifications | Yes | Likely | - |
 | Provider Count Display | Yes | Yes | - |
 
 ---
@@ -63,7 +64,7 @@
 |---|---------|--------|--------|--------|
 | 1.1 | Homepage Testimonials Section | High | Low | Backlog |
 | 1.2 | "Most Reviewed" / "Top Rated" Sections | High | Low | Backlog |
-| 1.3 | Email Notifications System | High | Medium | Backlog |
+| 1.3 | Email Notifications System | High | Medium | **Complete** |
 | 1.4 | Enhanced Provider Cards (review quotes) | High | Low | Backlog |
 | 1.5 | Quiz/Matching Tool | Very High | High | **Complete** |
 
@@ -73,12 +74,22 @@ Display recent approved reviews on homepage with reviewer name, provider name, r
 #### 1.2 "Most Reviewed" / "Top Rated" Sections
 Add sections to homepage and category pages showing providers sorted by review count/rating. Helps users find proven providers.
 
-#### 1.3 Email Notifications System
+#### 1.3 Email Notifications System ✅ COMPLETE
 - Notify providers of new inquiries (critical!)
 - Notify providers of new reviews
 - Auto-send invitation emails
 - Weekly activity digest
 - Uses existing Resend integration
+
+**Implemented:**
+- Centralized email library (`src/lib/email/`)
+- Beautiful HTML email templates with consistent branding
+- Inquiry notifications to providers and admins
+- Review submission notifications (provider + admin)
+- Review approval notifications to reviewers
+- Provider invitation emails with accept link
+- Quiz lead admin notifications
+- Environment variables: `RESEND_API_KEY`, `ADMIN_EMAIL`, `EMAIL_FROM`
 
 #### 1.4 Enhanced Provider Cards
 Show review count and a short testimonial quote on provider cards. More compelling than just star ratings.
@@ -222,9 +233,9 @@ Enable boost purchase buttons (currently "Coming Soon"). Spotlight, Homepage Fea
 
 ## Technical Debt
 
-- [ ] Email integration for invitations (has TODO in code)
+- [x] ~~Email integration for invitations~~ (Complete)
 - [ ] `/portal/setup` page (referenced in middleware, not implemented)
-- [ ] Review notification to providers
+- [x] ~~Review notification to providers~~ (Complete)
 - [ ] Stripe price IDs configuration & documentation
 - [ ] Add environment variable documentation (.env.example)
 - [ ] Error boundaries and fallback UI

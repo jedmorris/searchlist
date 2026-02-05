@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth/roles'
+import { sendInvitationEmail } from '@/lib/email'
 
 export async function GET() {
   try {
@@ -67,13 +68,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    // TODO: Send invitation email via Resend
-    // For now, we'll just return the token for manual sharing
     const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/accept-invitation?token=${data.token}`
+
+    // Get provider name if linked to a provider
+    let providerName: string | null = null
+    if (provider_id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: providerData } = await (supabase.from('providers') as any)
+        .select('name')
+        .eq('id', provider_id)
+        .single()
+      providerName = (providerData as { name: string } | null)?.name || null
+    }
+
+    // Send invitation email
+    sendInvitationEmail({
+      email,
+      providerName,
+      inviteUrl,
+      expiresAt: data.expires_at,
+    }).catch((err) => {
+      console.error('Failed to send invitation email:', err)
+    })
 
     return NextResponse.json({
       invitation: data,
       invite_url: inviteUrl,
+      email_sent: true,
     })
   } catch (error) {
     return NextResponse.json(

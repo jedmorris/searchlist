@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { Resend } from 'resend'
-
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null
+import { sendInquiryNotification, sendInquiryAdminNotification } from '@/lib/email'
 
 export async function POST(request: Request) {
   try {
@@ -65,80 +61,27 @@ export async function POST(request: Request) {
       )
     }
 
-    // Send email notification if Resend is configured
-    if (resend && provider.email) {
-      const dealContextMap: Record<string, string> = {
-        buying: 'Buying a business',
-        selling: 'Selling a business',
-        both: 'Both buying and selling',
-        general: 'General inquiry',
-      }
-      const dealContextLabel = deal_context
-        ? dealContextMap[deal_context as string] || deal_context
-        : 'Not specified'
-
-      try {
-        await resend.emails.send({
-          from: 'Search List <noreply@searchlist.com>',
-          to: provider.email,
-          subject: `New Inquiry from ${sender_name} via Search List`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #333;">New Inquiry from Search List</h2>
-              <p>Hi ${provider.name.split(' ')[0]},</p>
-              <p>You have received a new inquiry through Search List:</p>
-
-              <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <p><strong>From:</strong> ${sender_name}</p>
-                <p><strong>Email:</strong> ${sender_email}</p>
-                ${sender_phone ? `<p><strong>Phone:</strong> ${sender_phone}</p>` : ''}
-                ${company_name ? `<p><strong>Company:</strong> ${company_name}</p>` : ''}
-                <p><strong>Context:</strong> ${dealContextLabel}</p>
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 15px 0;" />
-                <p><strong>Message:</strong></p>
-                <p style="white-space: pre-wrap;">${message}</p>
-              </div>
-
-              <p>Reply directly to this email or contact ${sender_name} at ${sender_email}.</p>
-
-              <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0 15px;" />
-              <p style="color: #666; font-size: 12px;">
-                This message was sent via Search List.
-                You're receiving this because you're listed as a provider.
-              </p>
-            </div>
-          `,
-          replyTo: sender_email,
-        })
-      } catch (emailError) {
-        // Log email error but don't fail the request
-        console.error('Error sending email notification:', emailError)
-      }
+    // Send email notifications (don't await, fire and forget)
+    const emailData = {
+      providerName: provider.name,
+      providerEmail: provider.email,
+      senderName: sender_name,
+      senderEmail: sender_email,
+      senderPhone: sender_phone,
+      companyName: company_name,
+      dealContext: deal_context,
+      message,
     }
 
-    // Also notify admin if configured
-    if (resend && process.env.ADMIN_EMAIL) {
-      try {
-        await resend.emails.send({
-          from: 'Search List <noreply@searchlist.com>',
-          to: process.env.ADMIN_EMAIL,
-          subject: `[Search List] New inquiry for ${provider.name}`,
-          html: `
-            <div style="font-family: sans-serif;">
-              <p>New inquiry submitted:</p>
-              <ul>
-                <li><strong>Provider:</strong> ${provider.name} (${provider.company_name || 'N/A'})</li>
-                <li><strong>From:</strong> ${sender_name} (${sender_email})</li>
-                <li><strong>Context:</strong> ${deal_context || 'Not specified'}</li>
-              </ul>
-              <p>Message preview: ${message.substring(0, 200)}${message.length > 200 ? '...' : ''}</p>
-            </div>
-          `,
-        })
-      } catch (emailError) {
-        console.error('Error sending admin notification:', emailError)
-      }
-    }
+    // Send to provider
+    sendInquiryNotification(emailData).catch((err) => {
+      console.error('Failed to send inquiry notification:', err)
+    })
+
+    // Send to admin
+    sendInquiryAdminNotification(emailData).catch((err) => {
+      console.error('Failed to send admin notification:', err)
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

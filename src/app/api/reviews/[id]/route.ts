@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth/roles'
+import { sendReviewApprovedNotification } from '@/lib/email'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -42,6 +43,23 @@ export async function PUT(request: Request, context: RouteContext) {
     const { id } = await context.params
     const body = await request.json()
 
+    // Get the current review state to check if we're approving
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: existingReviewData } = await (supabase.from('reviews') as any)
+      .select('is_approved, author_email, author_name, rating, title, content, provider_id')
+      .eq('id', id)
+      .single()
+
+    const existingReview = existingReviewData as {
+      is_approved: boolean
+      author_email: string
+      author_name: string
+      rating: number
+      title: string | null
+      content: string
+      provider_id: string
+    } | null
+
     // Only allow admins to update these fields
     const allowedFields = [
       'is_approved',
@@ -60,11 +78,27 @@ export async function PUT(request: Request, context: RouteContext) {
     const { data: review, error } = await (supabase.from('reviews') as any)
       .update(updateData)
       .eq('id', id)
-      .select()
+      .select('*, providers(id, name, slug)')
       .single()
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    // If review is being approved (was not approved, now is), send notification to reviewer
+    if (body.is_approved === true && existingReview && !existingReview.is_approved) {
+      const provider = review.providers as { id: string; name: string; slug: string }
+
+      sendReviewApprovedNotification(existingReview.author_email, {
+        providerName: provider.name,
+        providerSlug: provider.slug,
+        reviewerName: existingReview.author_name,
+        rating: existingReview.rating,
+        title: existingReview.title,
+        content: existingReview.content,
+      }).catch((err) => {
+        console.error('Failed to send review approved notification:', err)
+      })
     }
 
     return NextResponse.json({ review })

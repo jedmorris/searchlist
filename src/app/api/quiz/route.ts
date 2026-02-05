@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import type { QuizMatchedProvider, QuizLeadInsert } from '@/types/database'
 import { headers } from 'next/headers'
+import { sendQuizLeadAdminNotification } from '@/lib/email'
 
 // GET: Fetch categories for the quiz
 export async function GET() {
@@ -139,6 +140,20 @@ export async function POST(request: Request) {
       // Don't fail the request if saving the lead fails
       // Just log it and continue returning the matched providers
     }
+
+    // Send admin notification for new quiz lead
+    sendQuizLeadAdminNotification({
+      name,
+      email,
+      phone,
+      companyName,
+      serviceNeeds,
+      dealSizeRange,
+      locationPreference,
+      matchedCount: providers.length,
+    }).catch((err) => {
+      console.error('Failed to send quiz lead admin notification:', err)
+    })
 
     return NextResponse.json({
       leadId: savedLead?.id || null,
