@@ -39,11 +39,11 @@
 | Feature | Search List | Sam's List | Gap |
 |---------|---------------|------------|-----|
 | Provider Directory | Yes | Yes | - |
-| Category Browsing | Yes | Yes | Less subcategories |
+| Category Browsing | Yes | Yes | - |
 | State/Location Filter | Yes | Yes | - |
 | Search | Full-text + Filters | Advanced | - |
 | Provider Profiles | Yes | Yes | - |
-| Review System | Yes | Yes | Need better surfacing |
+| Review System | Yes | Yes | - |
 | Featured Providers | Yes | Yes | - |
 | Inquiry/Contact Form | Yes | Yes | - |
 | Provider Portal | Yes | Yes | - |
@@ -257,31 +257,86 @@ Enable boost purchase buttons (currently "Coming Soon"). Spotlight, Homepage Fea
 
 ---
 
+### P7: New Recommendations (Added Feb 2026)
+
+| # | Feature | Impact | Effort | Status |
+|---|---------|--------|--------|--------|
+| 7.1 | Provider Comparison Tool | High | Medium | Backlog |
+| 7.2 | Saved Providers / Favorites | Medium-High | Low | Backlog |
+| 7.3 | Provider Availability Calendar | Medium | Medium | Backlog |
+| 7.4 | Review Response System | Medium | Low | Backlog |
+| 7.5 | Weekly Digest Emails | Medium | Low | Backlog |
+| 7.6 | Provider Verification Badges | Medium | Low | Backlog |
+| 7.7 | Deal Flow Tracking | High | High | Backlog |
+| 7.8 | Provider API/Embed Widget | Medium | Medium | Backlog |
+
+#### 7.1 Provider Comparison Tool
+Side-by-side comparison of 2-4 providers. Compare deal size ranges, services, ratings, location, experience. Common in B2B directories.
+
+#### 7.2 Saved Providers / Favorites
+Allow users to save providers to a list (localStorage or auth-gated). Quick shortlist for later inquiry. Very common UX pattern.
+
+#### 7.3 Provider Availability Calendar
+Providers can indicate their current availability/capacity. Shows "Taking new clients" vs "Booked until Q2" status. Helps users avoid dead-end inquiries.
+
+#### 7.4 Review Response System
+Let providers respond to reviews publicly. Common on Google/Yelp. Builds trust and engagement. Shows providers are active.
+
+#### 7.5 Weekly Digest Emails
+Automated weekly email to admins with: new inquiries, new reviews, new quiz leads, provider signups. Keeps admins engaged without checking dashboard.
+
+#### 7.6 Provider Verification Badges
+Multiple badge types: "Identity Verified", "Background Checked", "Client Verified" (has completed deals). Tiered trust signals beyond basic verification.
+
+#### 7.7 Deal Flow Tracking
+For premium providers: track deals from inquiry → intro call → engaged → closed. CRM-lite functionality. High value for paid tiers.
+
+#### 7.8 Provider API/Embed Widget
+Let providers embed their Search List profile/reviews on their own website. Widget shows rating, review count, "View on Search List" link. Free marketing.
+
+---
+
 ## Suggested Implementation Roadmap
 
-### Phase 1: Quick Wins (1-2 weeks)
-- [ ] 1.1 Homepage Testimonials Section
-- [ ] 1.2 "Most Reviewed" Sections
+### ✅ COMPLETED PHASES
+
+#### Phase 1: Core Features (DONE)
+- [x] 1.1 Homepage Testimonials Section
+- [x] 1.2 "Most Reviewed" / "Top Rated" Sections
+- [x] 1.3 Email Notifications System
 - [x] 1.4 Enhanced Provider Cards with Review Quotes
+- [x] 1.5 Quiz/Matching Tool
+- [x] 2.1 Industry/Specialty Subcategories
+- [x] 2.2 Advanced Search Filters UI
+
+---
+
+### 🎯 RECOMMENDED NEXT PHASE
+
+#### Phase 2: Quick Wins & Polish (Recommended)
+- [ ] 3.2 FAQ Page *(closes competitive gap)*
+- [ ] 3.3 SEO Optimizations *(JSON-LD, sitemap)*
 - [ ] 2.3 Improved Pagination
-- [ ] 3.2 FAQ Page
-
-### Phase 2: Core Improvements (3-4 weeks)
-- [ ] 1.3 Email Notifications System
-- [ ] 2.1 Industry/Specialty Subcategories
-- [ ] 2.2 Advanced Search Filters UI
+- [ ] 7.2 Saved Providers / Favorites *(high UX value)*
 - [ ] 4.2 Portal Onboarding Flow
-- [ ] 6.1 Activate Feature Boosts
+- [ ] 6.1 Activate Feature Boosts *(revenue)*
 
-### Phase 3: Major Features (6-8 weeks)
-- [ ] 1.5 Quiz/Matching Tool
+#### Phase 3: Engagement & Growth
 - [ ] 2.4 Related Providers
+- [ ] 7.4 Review Response System
+- [ ] 7.5 Weekly Digest Emails
 - [ ] 4.1 Provider Analytics Dashboard
-- [ ] 3.1 Blog/Resources Section
+- [ ] 7.1 Provider Comparison Tool
 
-### Phase 4: Future
+#### Phase 4: Premium Features
+- [ ] 7.7 Deal Flow Tracking
+- [ ] 3.1 Blog/Resources Section
+- [ ] 7.3 Provider Availability Calendar
 - [ ] 5.2 Client Accounts
+
+#### Phase 5: Future / Scale
 - [ ] 5.3 In-App Messaging
+- [ ] 7.8 Provider API/Embed Widget
 - [ ] 3.4 Provider Case Studies
 - [ ] 5.1 Provider Referral Program
 
