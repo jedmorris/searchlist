@@ -37,6 +37,13 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
+  // Redirect authenticated users away from login page
+  if (pathname === '/admin/login' && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin'
+    return NextResponse.redirect(url)
+  }
+
   // Public routes - always allow
   if (
     pathname === '/admin/login' ||

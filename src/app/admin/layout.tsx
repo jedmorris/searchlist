@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { headers } from 'next/headers'
-import { LayoutDashboard, Users, MessageSquare, FolderTree, LogOut, UserCog, Tag, BarChart3, Mail, Star, Sparkles, Building2, Video } from 'lucide-react'
+import { LayoutDashboard, Users, MessageSquare, FolderTree, LogOut, UserCog, Tag, BarChart3, Mail, Star, Sparkles, Building2, Video, Settings } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 
@@ -17,6 +16,7 @@ const adminNav = [
   { name: 'Industries', href: '/admin/industries', icon: Building2 },
   { name: 'Invitations', href: '/admin/invitations', icon: Mail },
   { name: 'Admin Users', href: '/admin/users', icon: UserCog },
+  { name: 'YouTube', href: '/admin/settings/youtube', icon: Settings },
 ]
 
 export default async function AdminLayout({
@@ -25,18 +25,13 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const headersList = await headers()
-
-  // Get the current URL from headers
-  const url = headersList.get('x-url') || headersList.get('referer') || ''
-  const isLoginPage = url.includes('/admin/login')
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // For login page, render without admin layout (middleware handles auth redirect)
-  if (!user || isLoginPage) {
+  // No user means we're on the login page (middleware redirects unauthenticated users there)
+  if (!user) {
     return <>{children}</>
   }
 

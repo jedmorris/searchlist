@@ -509,6 +509,8 @@ export interface Database {
           featured_image_url: string | null
           is_published: boolean
           is_featured: boolean
+          source: string
+          youtube_channel_id: string | null
           created_at: string
           updated_at: string
         }
@@ -531,6 +533,8 @@ export interface Database {
           featured_image_url?: string | null
           is_published?: boolean
           is_featured?: boolean
+          source?: string
+          youtube_channel_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -553,8 +557,77 @@ export interface Database {
           featured_image_url?: string | null
           is_published?: boolean
           is_featured?: boolean
+          source?: string
+          youtube_channel_id?: string | null
           created_at?: string
           updated_at?: string
+        }
+      }
+      youtube_channel_settings: {
+        Row: {
+          id: string
+          channel_id: string
+          channel_name: string | null
+          channel_url: string | null
+          webhook_secret: string
+          subscription_expires_at: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          channel_id: string
+          channel_name?: string | null
+          channel_url?: string | null
+          webhook_secret: string
+          subscription_expires_at?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          channel_id?: string
+          channel_name?: string | null
+          channel_url?: string | null
+          webhook_secret?: string
+          subscription_expires_at?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      youtube_processed_videos: {
+        Row: {
+          id: string
+          video_id: string
+          video_title: string | null
+          blog_post_id: string | null
+          processed_at: string
+          status: YouTubeVideoStatus
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          video_id: string
+          video_title?: string | null
+          blog_post_id?: string | null
+          processed_at?: string
+          status?: YouTubeVideoStatus
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          video_id?: string
+          video_title?: string | null
+          blog_post_id?: string | null
+          processed_at?: string
+          status?: YouTubeVideoStatus
+          error_message?: string | null
+          created_at?: string
         }
       }
     }
@@ -608,6 +681,7 @@ export type SubscriptionTier = 'free' | 'basic' | 'featured' | 'premium'
 export type SubscriptionStatus = 'active' | 'past_due' | 'canceled' | 'incomplete' | 'trialing'
 export type FeatureType = 'spotlight' | 'homepage_feature' | 'category_boost'
 export type PaymentStatus = 'succeeded' | 'failed' | 'pending' | 'refunded'
+export type YouTubeVideoStatus = 'pending' | 'processing' | 'completed' | 'failed'
 
 // Convenience types
 export type Category = Database['public']['Tables']['categories']['Row']
@@ -659,6 +733,14 @@ export type PaymentHistoryInsert = Database['public']['Tables']['payment_history
 export type BlogPost = Database['public']['Tables']['blog_posts']['Row']
 export type BlogPostInsert = Database['public']['Tables']['blog_posts']['Insert']
 export type BlogPostUpdate = Database['public']['Tables']['blog_posts']['Update']
+
+export type YouTubeChannelSettings = Database['public']['Tables']['youtube_channel_settings']['Row']
+export type YouTubeChannelSettingsInsert = Database['public']['Tables']['youtube_channel_settings']['Insert']
+export type YouTubeChannelSettingsUpdate = Database['public']['Tables']['youtube_channel_settings']['Update']
+
+export type YouTubeProcessedVideo = Database['public']['Tables']['youtube_processed_videos']['Row']
+export type YouTubeProcessedVideoInsert = Database['public']['Tables']['youtube_processed_videos']['Insert']
+export type YouTubeProcessedVideoUpdate = Database['public']['Tables']['youtube_processed_videos']['Update']
 
 // Extended types with relations
 export type ProviderWithCategories = Provider & {
