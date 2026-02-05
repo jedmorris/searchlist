@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MapPin, Wifi, BadgeCheck, Star } from 'lucide-react'
+import { MapPin, Wifi, BadgeCheck, Star, Quote } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -7,17 +7,36 @@ import { StarRatingDisplay } from '@/components/reviews/StarRating'
 import { formatDealSizeRange } from '@/lib/constants'
 import type { Provider, Category } from '@/types/database'
 
-interface ProviderCardProps {
-  provider: Provider & { categories?: Category[] }
+export interface FeaturedReview {
+  content: string
+  author_name: string
+  rating: number
 }
 
-export function ProviderCard({ provider }: ProviderCardProps) {
+interface ProviderCardProps {
+  provider: Provider & {
+    categories?: Category[]
+    featured_review?: FeaturedReview | null
+  }
+  showReviewQuote?: boolean
+}
+
+export function ProviderCard({ provider, showReviewQuote = true }: ProviderCardProps) {
   const initials = provider.name
     .split(' ')
     .map((n) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2)
+
+  const featuredReview = provider.featured_review
+  const hasReview = showReviewQuote && featuredReview && featuredReview.content
+
+  // Truncate review content
+  const maxQuoteLength = 100
+  const truncatedQuote = hasReview && featuredReview.content.length > maxQuoteLength
+    ? featuredReview.content.substring(0, maxQuoteLength).trim() + '...'
+    : featuredReview?.content
 
   return (
     <Link href={`/provider/${provider.slug}`}>
@@ -48,10 +67,23 @@ export function ProviderCard({ provider }: ProviderCardProps) {
             </div>
           </div>
 
-          {provider.tagline && (
+          {provider.tagline && !hasReview && (
             <p className="mt-4 text-sm text-muted-foreground line-clamp-2">
               {provider.tagline}
             </p>
+          )}
+
+          {/* Featured Review Quote */}
+          {hasReview && (
+            <div className="mt-4 relative">
+              <Quote className="absolute -top-1 -left-1 h-4 w-4 text-primary/30" />
+              <p className="text-sm text-muted-foreground italic pl-4 line-clamp-2">
+                &ldquo;{truncatedQuote}&rdquo;
+              </p>
+              <p className="text-xs text-muted-foreground mt-1 pl-4">
+                — {featuredReview.author_name}
+              </p>
+            </div>
           )}
 
           {(provider.rating_average !== null && provider.rating_average !== undefined) && (

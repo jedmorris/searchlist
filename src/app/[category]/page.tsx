@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { ProviderGrid } from '@/components/providers/ProviderGrid'
 import { FilterSidebar } from '@/components/providers/FilterSidebar'
 import { createClient } from '@/lib/supabase/server'
+import { addFeaturedReviewsToProviders } from '@/lib/providers/reviews'
 import type { Metadata } from 'next'
 import type { Provider, Category, Service } from '@/types/database'
 
@@ -123,7 +124,8 @@ async function getProviders(
     }
   }
 
-  return filteredProviders
+  // Add featured reviews to providers
+  return addFeaturedReviewsToProviders(filteredProviders)
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

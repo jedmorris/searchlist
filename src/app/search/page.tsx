@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { ChevronRight, Search } from 'lucide-react'
-import { ProviderGrid } from '@/components/providers/ProviderGrid'
+import { ProviderGrid, type ProviderWithReview } from '@/components/providers/ProviderGrid'
 import { CategoryCard } from '@/components/categories/CategoryCard'
 import { createClient } from '@/lib/supabase/server'
+import { addFeaturedReviewsToProviders } from '@/lib/providers/reviews'
 import type { Category, Provider } from '@/types/database'
 import type { Metadata } from 'next'
 
@@ -21,9 +22,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   }
 }
 
-// ... imports
-
-async function searchProviders(query: string): Promise<Provider[]> {
+async function searchProviders(query: string): Promise<ProviderWithReview[]> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -43,7 +42,9 @@ async function searchProviders(query: string): Promise<Provider[]> {
     return []
   }
 
-  return data || []
+  // Add featured reviews to providers
+  const providers = (data || []) as Provider[]
+  return addFeaturedReviewsToProviders(providers)
 }
 
 async function searchCategories(query: string): Promise<Category[]> {

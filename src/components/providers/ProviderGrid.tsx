@@ -1,11 +1,17 @@
-import { ProviderCard } from './ProviderCard'
+import { ProviderCard, type FeaturedReview } from './ProviderCard'
 import type { Provider, Category } from '@/types/database'
 
-interface ProviderGridProps {
-  providers: (Provider & { categories?: Category[] })[]
+export type ProviderWithReview = Provider & {
+  categories?: Category[]
+  featured_review?: FeaturedReview | null
 }
 
-export function ProviderGrid({ providers }: ProviderGridProps) {
+interface ProviderGridProps {
+  providers: ProviderWithReview[]
+  showReviewQuotes?: boolean
+}
+
+export function ProviderGrid({ providers, showReviewQuotes = true }: ProviderGridProps) {
   if (providers.length === 0) {
     return (
       <div className="text-center py-12">
@@ -17,7 +23,11 @@ export function ProviderGrid({ providers }: ProviderGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {providers.map((provider) => (
-        <ProviderCard key={provider.id} provider={provider} />
+        <ProviderCard
+          key={provider.id}
+          provider={provider}
+          showReviewQuote={showReviewQuotes}
+        />
       ))}
     </div>
   )

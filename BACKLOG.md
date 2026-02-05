@@ -28,6 +28,7 @@
 - [x] **Email Notifications** (inquiries, reviews, invitations, quiz leads)
 - [x] **Homepage Testimonials** (displays approved reviews with social proof)
 - [x] **Top Rated / Most Reviewed Sections** (tabbed display of top providers)
+- [x] **Enhanced Provider Cards** (featured review quotes on cards)
 
 ---
 
@@ -39,7 +40,7 @@
 | Category Browsing | Yes | Yes | Less subcategories |
 | State/Location Filter | Yes | Yes | - |
 | Search | Full-text | Advanced | Need UI improvements |
-| Provider Profiles | Yes | Yes | Missing testimonial quotes on cards |
+| Provider Profiles | Yes | Yes | - |
 | Review System | Yes | Yes | Need better surfacing |
 | Featured Providers | Yes | Yes | - |
 | Inquiry/Contact Form | Yes | Yes | - |
@@ -67,7 +68,7 @@
 | 1.1 | Homepage Testimonials Section | High | Low | **Complete** |
 | 1.2 | "Most Reviewed" / "Top Rated" Sections | High | Low | **Complete** |
 | 1.3 | Email Notifications System | High | Medium | **Complete** |
-| 1.4 | Enhanced Provider Cards (review quotes) | High | Low | Backlog |
+| 1.4 | Enhanced Provider Cards (review quotes) | High | Low | **Complete** |
 | 1.5 | Quiz/Matching Tool | Very High | High | **Complete** |
 
 #### 1.1 Homepage Testimonials Section ✅ COMPLETE
@@ -110,8 +111,18 @@ Add sections to homepage and category pages showing providers sorted by review c
 - Quiz lead admin notifications
 - Environment variables: `RESEND_API_KEY`, `ADMIN_EMAIL`, `EMAIL_FROM`
 
-#### 1.4 Enhanced Provider Cards
+#### 1.4 Enhanced Provider Cards ✅ COMPLETE
 Show review count and a short testimonial quote on provider cards. More compelling than just star ratings.
+
+**Implemented:**
+- FeaturedReview type in ProviderCard component
+- Review quotes displayed instead of tagline when available
+- Truncated to 100 characters with ellipsis
+- Shows author name attribution
+- `getFeaturedReviewsForProviders` utility function
+- `addFeaturedReviewsToProviders` helper for batch fetching
+- Prioritizes: featured reviews > highest rated > most recent
+- Updated search and category pages to include featured reviews
 
 #### 1.5 Quiz/Matching Tool ✅ COMPLETE
 Multi-step quiz asking about needs, budget, location, industry. Matches users to top 3-5 relevant providers.
@@ -225,7 +236,7 @@ Enable boost purchase buttons (currently "Coming Soon"). Spotlight, Homepage Fea
 ### Phase 1: Quick Wins (1-2 weeks)
 - [ ] 1.1 Homepage Testimonials Section
 - [ ] 1.2 "Most Reviewed" Sections
-- [ ] 1.4 Enhanced Provider Cards with Review Quotes
+- [x] 1.4 Enhanced Provider Cards with Review Quotes
 - [ ] 2.3 Improved Pagination
 - [ ] 3.2 FAQ Page
 
