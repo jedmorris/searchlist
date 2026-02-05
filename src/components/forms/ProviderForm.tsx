@@ -40,7 +40,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/hooks/use-toast'
 import { US_STATES } from '@/lib/constants'
-import type { Provider, Category, Service } from '@/types/database'
+import type { Provider, Category, Service, Industry } from '@/types/database'
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -66,6 +66,7 @@ const formSchema = z.object({
   is_active: z.boolean().default(true),
   category_ids: z.array(z.string()).default([]),
   service_ids: z.array(z.string()).default([]),
+  industry_ids: z.array(z.string()).default([]),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -74,16 +75,20 @@ interface ProviderFormProps {
   provider?: Provider | null
   categories: Category[]
   services: Service[]
+  industries: Industry[]
   providerCategories?: string[]
   providerServices?: string[]
+  providerIndustries?: string[]
 }
 
 export function ProviderForm({
   provider,
   categories,
   services,
+  industries,
   providerCategories = [],
   providerServices = [],
+  providerIndustries = [],
 }: ProviderFormProps) {
   const router = useRouter()
   const { toast } = useToast()
@@ -120,6 +125,7 @@ export function ProviderForm({
       is_active: provider?.is_active ?? true,
       category_ids: providerCategories,
       service_ids: providerServices,
+      industry_ids: providerIndustries,
     },
   })
 
@@ -687,6 +693,53 @@ export function ProviderForm({
                             </FormControl>
                             <FormLabel className="!mt-0 text-sm cursor-pointer">
                               {service.name}
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Separator />
+
+            <FormField
+              control={form.control}
+              name="industry_ids"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Industries</FormLabel>
+                  <FormDescription>
+                    Select the industries this provider specializes in
+                  </FormDescription>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                    {industries.map((industry) => (
+                      <FormField
+                        key={industry.id}
+                        control={form.control}
+                        name="industry_ids"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(industry.id)}
+                                onCheckedChange={(checked) => {
+                                  const current = field.value || []
+                                  if (checked) {
+                                    field.onChange([...current, industry.id])
+                                  } else {
+                                    field.onChange(
+                                      current.filter((id) => id !== industry.id)
+                                    )
+                                  }
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="!mt-0 text-sm cursor-pointer">
+                              {industry.name}
                             </FormLabel>
                           </FormItem>
                         )}

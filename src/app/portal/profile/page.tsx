@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth/roles'
 import { ProfileEditForm } from '@/components/portal/ProfileEditForm'
-import type { Provider, Category, Service } from '@/types/database'
+import type { Provider, Category, Service, Industry } from '@/types/database'
 
 async function getProviderData(providerId: string) {
   const supabase = await createClient()
@@ -26,6 +26,12 @@ async function getProviderData(providerId: string) {
     .select('*')
     .order('name')
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: industries } = await (supabase.from('industries') as any)
+    .select('*')
+    .order('display_order')
+    .order('name')
+
   const { data: providerCategories } = await supabase
     .from('provider_categories')
     .select('category_id')
@@ -36,12 +42,19 @@ async function getProviderData(providerId: string) {
     .select('service_id')
     .eq('provider_id', providerId)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: providerIndustries } = await (supabase.from('provider_industries') as any)
+    .select('industry_id')
+    .eq('provider_id', providerId)
+
   return {
     provider: provider as Provider | null,
     categories: (categories || []) as Category[],
     services: (services || []) as Service[],
+    industries: (industries || []) as Industry[],
     providerCategories: (providerCategories || []).map((pc: { category_id: string }) => pc.category_id),
     providerServices: (providerServices || []).map((ps: { service_id: string }) => ps.service_id),
+    providerIndustries: (providerIndustries || []).map((pi: { industry_id: string }) => pi.industry_id),
   }
 }
 
@@ -88,8 +101,10 @@ export default async function PortalProfilePage() {
         provider={data.provider}
         categories={data.categories}
         services={data.services}
+        industries={data.industries}
         providerCategories={data.providerCategories}
         providerServices={data.providerServices}
+        providerIndustries={data.providerIndustries}
       />
     </div>
   )

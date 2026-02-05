@@ -21,10 +21,21 @@ async function getServices() {
   return data || []
 }
 
+async function getIndustries() {
+  const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase.from('industries') as any)
+    .select('*')
+    .order('display_order')
+    .order('name')
+  return data || []
+}
+
 export default async function NewProviderPage() {
-  const [categories, services] = await Promise.all([
+  const [categories, services, industries] = await Promise.all([
     getCategories(),
     getServices(),
+    getIndustries(),
   ])
 
   return (
@@ -49,7 +60,7 @@ export default async function NewProviderPage() {
         </p>
       </div>
 
-      <ProviderForm categories={categories} services={services} />
+      <ProviderForm categories={categories} services={services} industries={industries} />
     </div>
   )
 }

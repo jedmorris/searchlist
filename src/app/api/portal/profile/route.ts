@@ -48,8 +48,8 @@ export async function PUT(request: Request) {
     const supabase = await createClient()
     const body = await request.json()
 
-    // Extract category and service IDs
-    const { category_ids, service_ids, ...providerData } = body
+    // Extract category, service, and industry IDs
+    const { category_ids, service_ids, industry_ids, ...providerData } = body
 
     // Fields that providers can update (exclude admin-only fields)
     const allowedFields = [
@@ -124,6 +124,25 @@ export async function PUT(request: Request) {
         }))
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase.from('provider_services') as any).insert(serviceInserts)
+      }
+    }
+
+    // Update industries if provided
+    if (Array.isArray(industry_ids)) {
+      // Delete existing
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from('provider_industries') as any)
+        .delete()
+        .eq('provider_id', providerId)
+
+      // Insert new
+      if (industry_ids.length > 0) {
+        const industryInserts = industry_ids.map((industryId: string) => ({
+          provider_id: providerId,
+          industry_id: industryId,
+        }))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase.from('provider_industries') as any).insert(industryInserts)
       }
     }
 

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { ProviderForm } from '@/components/forms/ProviderForm'
 import { createClient } from '@/lib/supabase/server'
-import type { Provider, Category, Service } from '@/types/database'
+import type { Provider, Category, Service, Industry } from '@/types/database'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -55,16 +55,37 @@ async function getProviderServices(providerId: string): Promise<string[]> {
   return data?.map((d: { service_id: string }) => d.service_id) || []
 }
 
+async function getIndustries(): Promise<Industry[]> {
+  const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase.from('industries') as any)
+    .select('*')
+    .order('display_order')
+    .order('name')
+  return (data || []) as Industry[]
+}
+
+async function getProviderIndustries(providerId: string): Promise<string[]> {
+  const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase.from('provider_industries') as any)
+    .select('industry_id')
+    .eq('provider_id', providerId)
+  return data?.map((d: { industry_id: string }) => d.industry_id) || []
+}
+
 export default async function EditProviderPage({ params }: PageProps) {
   const { id } = await params
 
-  const [provider, categories, services, providerCategories, providerServices] =
+  const [provider, categories, services, industries, providerCategories, providerServices, providerIndustries] =
     await Promise.all([
       getProvider(id),
       getCategories(),
       getServices(),
+      getIndustries(),
       getProviderCategories(id),
       getProviderServices(id),
+      getProviderIndustries(id),
     ])
 
   if (!provider) {
@@ -95,8 +116,10 @@ export default async function EditProviderPage({ params }: PageProps) {
         provider={provider}
         categories={categories}
         services={services}
+        industries={industries}
         providerCategories={providerCategories}
         providerServices={providerServices}
+        providerIndustries={providerIndustries}
       />
     </div>
   )

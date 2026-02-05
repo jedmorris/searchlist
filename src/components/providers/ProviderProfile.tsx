@@ -8,6 +8,7 @@ import {
   Globe,
   Linkedin,
   MessageSquare,
+  Building2,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -19,12 +20,13 @@ import { ReviewForm } from '@/components/reviews/ReviewForm'
 import { ReviewList } from '@/components/reviews/ReviewList'
 import { ReviewSummary } from '@/components/reviews/ReviewSummary'
 import { formatDealSizeRange } from '@/lib/constants'
-import type { Provider, Category, Service, Review } from '@/types/database'
+import type { Provider, Category, Service, Review, Industry } from '@/types/database'
 
 interface ProviderProfileProps {
   provider: Provider
   categories: Category[]
   services: Service[]
+  industries?: Industry[]
   reviews?: Review[]
   ratingDistribution?: Record<number, number>
 }
@@ -33,6 +35,7 @@ export function ProviderProfile({
   provider,
   categories,
   services,
+  industries = [],
   reviews = [],
   ratingDistribution,
 }: ProviderProfileProps) {
@@ -171,6 +174,23 @@ export function ProviderProfile({
               {categories.map((category) => (
                 <Badge key={category.id} variant="secondary">
                   {category.name}
+                </Badge>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Industries Section */}
+        {industries.length > 0 && (
+          <section>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              Industry Specializations
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {industries.map((industry) => (
+                <Badge key={industry.id} variant="outline" className="bg-primary/5">
+                  {industry.name}
                 </Badge>
               ))}
             </div>

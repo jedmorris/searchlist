@@ -28,6 +28,7 @@ export async function POST(request: Request) {
       is_active,
       category_ids,
       service_ids,
+      industry_ids,
     } = body
 
     if (!name || !slug || !email) {
@@ -102,6 +103,17 @@ export async function POST(request: Request) {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase.from('provider_services') as any).insert(serviceInserts)
+    }
+
+    // Add industries
+    if (industry_ids && industry_ids.length > 0) {
+      const industryInserts = industry_ids.map((industryId: string) => ({
+        provider_id: provider.id,
+        industry_id: industryId,
+      }))
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from('provider_industries') as any).insert(industryInserts)
     }
 
     return NextResponse.json({ provider })

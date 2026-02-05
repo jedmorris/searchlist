@@ -172,6 +172,49 @@ export interface Database {
           service_id?: string
         }
       }
+      industries: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          icon: string | null
+          display_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          icon?: string | null
+          display_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string | null
+          icon?: string | null
+          display_order?: number
+          created_at?: string
+        }
+      }
+      provider_industries: {
+        Row: {
+          provider_id: string
+          industry_id: string
+        }
+        Insert: {
+          provider_id: string
+          industry_id: string
+        }
+        Update: {
+          provider_id?: string
+          industry_id?: string
+        }
+      }
       inquiries: {
         Row: {
           id: string
@@ -511,6 +554,10 @@ export type Service = Database['public']['Tables']['services']['Row']
 export type ServiceInsert = Database['public']['Tables']['services']['Insert']
 export type ServiceUpdate = Database['public']['Tables']['services']['Update']
 
+export type Industry = Database['public']['Tables']['industries']['Row']
+export type IndustryInsert = Database['public']['Tables']['industries']['Insert']
+export type IndustryUpdate = Database['public']['Tables']['industries']['Update']
+
 export type Inquiry = Database['public']['Tables']['inquiries']['Row']
 export type InquiryInsert = Database['public']['Tables']['inquiries']['Insert']
 export type InquiryUpdate = Database['public']['Tables']['inquiries']['Update']
@@ -550,9 +597,14 @@ export type ProviderWithServices = Provider & {
   services: Service[]
 }
 
+export type ProviderWithIndustries = Provider & {
+  industries: Industry[]
+}
+
 export type ProviderWithAll = Provider & {
   categories: Category[]
   services: Service[]
+  industries: Industry[]
 }
 
 export type ServiceWithCategory = Service & {

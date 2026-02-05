@@ -8,7 +8,7 @@ import { FilterSidebar } from '@/components/providers/FilterSidebar'
 import { createClient } from '@/lib/supabase/server'
 import { addFeaturedReviewsToProviders } from '@/lib/providers/reviews'
 import type { Metadata } from 'next'
-import type { Provider, Category, Service } from '@/types/database'
+import type { Provider, Category, Service, Industry } from '@/types/database'
 
 interface PageProps {
   params: Promise<{ category: string }>
@@ -17,6 +17,7 @@ interface PageProps {
     dealMax?: string
     remote?: string
     services?: string
+    industries?: string
   }>
 }
 
@@ -46,6 +47,19 @@ async function getServices(categoryId: string): Promise<Service[]> {
   return data as Service[]
 }
 
+async function getIndustries(): Promise<Industry[]> {
+  const supabase = await createClient()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from('industries') as any)
+    .select('*')
+    .order('display_order')
+    .order('name')
+
+  if (error || !data) return []
+  return data as Industry[]
+}
+
 async function getProviders(
   categoryId: string,
   filters: {
@@ -53,6 +67,7 @@ async function getProviders(
     dealMax?: string
     remote?: string
     services?: string
+    industries?: string
   }
 ) {
   const supabase = await createClient()
@@ -124,6 +139,37 @@ async function getProviders(
     }
   }
 
+  // Filter by industries if specified
+  if (filters.industries) {
+    const industriesSlugs = filters.industries.split(',').filter(Boolean)
+    if (industriesSlugs.length > 0) {
+      // Get industries by slug
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: industriesData } = await (supabase.from('industries') as any)
+        .select('id')
+        .in('slug', industriesSlugs)
+
+      if (industriesData && industriesData.length > 0) {
+        const industryIds = industriesData.map((i: { id: string }) => i.id)
+
+        // Get provider_industries
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: providerIndustries } = await (supabase.from('provider_industries') as any)
+          .select('provider_id')
+          .in('industry_id', industryIds)
+
+        if (providerIndustries) {
+          const providerIdsWithIndustries = new Set(
+            providerIndustries.map((pi: { provider_id: string }) => pi.provider_id)
+          )
+          filteredProviders = filteredProviders.filter((p) =>
+            providerIdsWithIndustries.has(p.id)
+          )
+        }
+      }
+    }
+  }
+
   // Add featured reviews to providers
   return addFeaturedReviewsToProviders(filteredProviders)
 }
@@ -151,8 +197,9 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     notFound()
   }
 
-  const [services, providers] = await Promise.all([
+  const [services, industries, providers] = await Promise.all([
     getServices(category.id),
+    getIndustries(),
     getProviders(category.id, filters),
   ])
 
@@ -182,7 +229,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="sticky top-24">
-            <FilterSidebar categorySlug={categorySlug} services={services} />
+            <FilterSidebar categorySlug={categorySlug} services={services} industries={industries} />
           </div>
         </aside>
 
@@ -199,7 +246,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px]">
                 <div className="mt-6">
-                  <FilterSidebar categorySlug={categorySlug} services={services} />
+                  <FilterSidebar categorySlug={categorySlug} services={services} industries={industries} />
                 </div>
               </SheetContent>
             </Sheet>

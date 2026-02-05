@@ -29,6 +29,7 @@
 - [x] **Homepage Testimonials** (displays approved reviews with social proof)
 - [x] **Top Rated / Most Reviewed Sections** (tabbed display of top providers)
 - [x] **Enhanced Provider Cards** (featured review quotes on cards)
+- [x] **Industry Subcategories** (industry specializations for providers with filtering)
 
 ---
 
@@ -52,7 +53,7 @@
 | "Most Reviewed" Sections | Yes | Yes | - |
 | Blog/Content | No | Yes | Gap |
 | FAQ Page | No | Yes | Gap |
-| Industry Subcategories | Partial | Yes | Gap |
+| Industry Subcategories | Yes | Yes | - |
 | Email Notifications | Yes | Likely | - |
 | Provider Count Display | Yes | Yes | - |
 
@@ -142,13 +143,24 @@ Multi-step quiz asking about needs, budget, location, industry. Matches users to
 
 | # | Feature | Impact | Effort | Status |
 |---|---------|--------|--------|--------|
-| 2.1 | Industry/Specialty Subcategories | Medium-High | Medium | Backlog |
+| 2.1 | Industry/Specialty Subcategories | Medium-High | Medium | **Complete** |
 | 2.2 | Advanced Search Filters UI | Medium | Low | Backlog |
 | 2.3 | Improved Pagination | Medium | Low | Backlog |
 | 2.4 | Related Providers on Profile | Medium | Medium | Backlog |
 
-#### 2.1 Industry/Specialty Subcategories
+#### 2.1 Industry/Specialty Subcategories ✅ COMPLETE
 Add industry tags (Tech, Healthcare, Real Estate, etc.). New `industries` table + `provider_industries` junction. Filter by multiple dimensions.
+
+**Implemented:**
+- `industries` table with name, slug, description, icon, display_order
+- `provider_industries` junction table
+- Industry type definitions in database.ts
+- Admin Industries management page (`/admin/industries`)
+- API routes: `/api/industries`, `/api/industries/[id]`, `/api/industries/counts`
+- Industry selection in ProviderForm (admin and portal)
+- Industry filtering in FilterSidebar component
+- Industries displayed on provider profile page
+- Provider API routes updated to handle industry_ids
 
 #### 2.2 Advanced Search Filters UI
 Add minimum rating filter, "has reviews" filter, industry filter. Sort by: Relevance, Rating, Review Count, Newest.

@@ -15,17 +15,19 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { US_STATES, DEAL_SIZE_RANGES } from '@/lib/constants'
-import type { Service } from '@/types/database'
+import type { Service, Industry } from '@/types/database'
 
 interface FilterSidebarProps {
   categorySlug: string
   services?: Service[]
+  industries?: Industry[]
   currentState?: string
 }
 
 export function FilterSidebar({
   categorySlug,
   services = [],
+  industries = [],
   currentState,
 }: FilterSidebarProps) {
   const router = useRouter()
@@ -38,9 +40,12 @@ export function FilterSidebar({
   const [selectedServices, setSelectedServices] = useState<string[]>(
     searchParams.get('services')?.split(',').filter(Boolean) || []
   )
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>(
+    searchParams.get('industries')?.split(',').filter(Boolean) || []
+  )
 
   const hasActiveFilters =
-    state || dealSizeMin || dealSizeMax || remoteOnly || selectedServices.length > 0
+    state || dealSizeMin || dealSizeMax || remoteOnly || selectedServices.length > 0 || selectedIndustries.length > 0
 
   useEffect(() => {
     const params = new URLSearchParams()
@@ -49,13 +54,14 @@ export function FilterSidebar({
     if (dealSizeMax) params.set('dealMax', dealSizeMax)
     if (remoteOnly) params.set('remote', 'true')
     if (selectedServices.length > 0) params.set('services', selectedServices.join(','))
+    if (selectedIndustries.length > 0) params.set('industries', selectedIndustries.join(','))
 
     const queryString = params.toString()
     const basePath = state ? `/${categorySlug}/${state}` : `/${categorySlug}`
     const newPath = queryString ? `${basePath}?${queryString}` : basePath
 
     router.push(newPath, { scroll: false })
-  }, [categorySlug, state, dealSizeMin, dealSizeMax, remoteOnly, selectedServices, router])
+  }, [categorySlug, state, dealSizeMin, dealSizeMax, remoteOnly, selectedServices, selectedIndustries, router])
 
   const handleServiceToggle = (serviceSlug: string) => {
     setSelectedServices((prev) =>
@@ -65,12 +71,21 @@ export function FilterSidebar({
     )
   }
 
+  const handleIndustryToggle = (industrySlug: string) => {
+    setSelectedIndustries((prev) =>
+      prev.includes(industrySlug)
+        ? prev.filter((i) => i !== industrySlug)
+        : [...prev, industrySlug]
+    )
+  }
+
   const clearFilters = () => {
     setState('')
     setDealSizeMin('')
     setDealSizeMax('')
     setRemoteOnly(false)
     setSelectedServices([])
+    setSelectedIndustries([])
   }
 
   return (
@@ -175,6 +190,30 @@ export function FilterSidebar({
                   />
                   <Label htmlFor={service.slug} className="text-sm cursor-pointer">
                     {service.name}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Industries Filter */}
+      {industries.length > 0 && (
+        <>
+          <Separator />
+          <div className="space-y-3">
+            <Label>Industries</Label>
+            <div className="space-y-2">
+              {industries.map((industry) => (
+                <div key={industry.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`industry-${industry.slug}`}
+                    checked={selectedIndustries.includes(industry.slug)}
+                    onCheckedChange={() => handleIndustryToggle(industry.slug)}
+                  />
+                  <Label htmlFor={`industry-${industry.slug}`} className="text-sm cursor-pointer">
+                    {industry.name}
                   </Label>
                 </div>
               ))}

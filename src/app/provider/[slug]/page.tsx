@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react'
 import { ProviderProfile } from '@/components/providers/ProviderProfile'
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
-import type { Provider, Category, Service, Review } from '@/types/database'
+import type { Provider, Category, Service, Review, Industry } from '@/types/database'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -46,6 +46,18 @@ async function getProviderServices(providerId: string): Promise<Service[]> {
 
   if (error || !data) return []
   return data.map((d: { services: Service | null }) => d.services).filter(Boolean) as Service[]
+}
+
+async function getProviderIndustries(providerId: string): Promise<Industry[]> {
+  const supabase = await createClient()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from('provider_industries') as any)
+    .select('industries(*)')
+    .eq('provider_id', providerId)
+
+  if (error || !data) return []
+  return data.map((d: { industries: Industry | null }) => d.industries).filter(Boolean) as Industry[]
 }
 
 async function getProviderReviews(providerId: string): Promise<{
@@ -100,9 +112,10 @@ export default async function ProviderPage({ params }: PageProps) {
     notFound()
   }
 
-  const [categories, services, reviewsData] = await Promise.all([
+  const [categories, services, industries, reviewsData] = await Promise.all([
     getProviderCategories(provider.id),
     getProviderServices(provider.id),
+    getProviderIndustries(provider.id),
     getProviderReviews(provider.id),
   ])
 
@@ -131,6 +144,7 @@ export default async function ProviderPage({ params }: PageProps) {
         provider={provider}
         categories={categories}
         services={services}
+        industries={industries}
         reviews={reviewsData.reviews}
         ratingDistribution={reviewsData.ratingDistribution}
       />

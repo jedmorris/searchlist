@@ -33,6 +33,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       is_active,
       category_ids,
       service_ids,
+      industry_ids,
     } = body
 
     if (!name || !slug || !email) {
@@ -118,6 +119,22 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase.from('provider_services') as any).insert(serviceInserts)
+    }
+
+    // Update industries - remove old and add new
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from('provider_industries') as any)
+      .delete()
+      .eq('provider_id', id)
+
+    if (industry_ids && industry_ids.length > 0) {
+      const industryInserts = industry_ids.map((industryId: string) => ({
+        provider_id: id,
+        industry_id: industryId,
+      }))
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from('provider_industries') as any).insert(industryInserts)
     }
 
     return NextResponse.json({ provider })
