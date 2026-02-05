@@ -489,6 +489,74 @@ export interface Database {
           created_at?: string
         }
       }
+      blog_posts: {
+        Row: {
+          id: string
+          title: string
+          slug: string
+          excerpt: string | null
+          youtube_video_id: string
+          video_duration: string | null
+          content: string
+          author_name: string
+          author_image_url: string | null
+          published_at: string | null
+          reading_time_minutes: number | null
+          category: string | null
+          tags: string[] | null
+          meta_title: string | null
+          meta_description: string | null
+          featured_image_url: string | null
+          is_published: boolean
+          is_featured: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          slug: string
+          excerpt?: string | null
+          youtube_video_id: string
+          video_duration?: string | null
+          content: string
+          author_name?: string
+          author_image_url?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number | null
+          category?: string | null
+          tags?: string[] | null
+          meta_title?: string | null
+          meta_description?: string | null
+          featured_image_url?: string | null
+          is_published?: boolean
+          is_featured?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          slug?: string
+          excerpt?: string | null
+          youtube_video_id?: string
+          video_duration?: string | null
+          content?: string
+          author_name?: string
+          author_image_url?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number | null
+          category?: string | null
+          tags?: string[] | null
+          meta_title?: string | null
+          meta_description?: string | null
+          featured_image_url?: string | null
+          is_published?: boolean
+          is_featured?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -587,6 +655,10 @@ export type FeaturePurchaseUpdate = Database['public']['Tables']['feature_purcha
 
 export type PaymentHistory = Database['public']['Tables']['payment_history']['Row']
 export type PaymentHistoryInsert = Database['public']['Tables']['payment_history']['Insert']
+
+export type BlogPost = Database['public']['Tables']['blog_posts']['Row']
+export type BlogPostInsert = Database['public']['Tables']['blog_posts']['Insert']
+export type BlogPostUpdate = Database['public']['Tables']['blog_posts']['Update']
 
 // Extended types with relations
 export type ProviderWithCategories = Provider & {

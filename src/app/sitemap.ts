@@ -12,6 +12,11 @@ interface ProviderSlug {
   updated_at: string | null
 }
 
+interface BlogPostSlug {
+  slug: string
+  updated_at: string | null
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
   const baseUrl = SITE_CONFIG.url
@@ -54,6 +59,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.5,
     },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
   ]
 
   // Fetch all categories
@@ -85,5 +96,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticPages, ...categoryPages, ...providerPages]
+  // Fetch all published blog posts
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: blogPostsData } = await (supabase as any)
+    .from('blog_posts')
+    .select('slug, updated_at')
+    .eq('is_published', true)
+    .order('published_at', { ascending: false })
+
+  const blogPosts = (blogPostsData || []) as BlogPostSlug[]
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updated_at || new Date()),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  return [...staticPages, ...categoryPages, ...providerPages, ...blogPages]
 }

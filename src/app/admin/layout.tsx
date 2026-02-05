@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { headers } from 'next/headers'
-import { LayoutDashboard, Users, MessageSquare, FolderTree, LogOut, UserCog, Tag, BarChart3, Mail, Star, Sparkles, Building2 } from 'lucide-react'
+import { LayoutDashboard, Users, MessageSquare, FolderTree, LogOut, UserCog, Tag, BarChart3, Mail, Star, Sparkles, Building2, Video } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 
@@ -11,6 +11,7 @@ const adminNav = [
   { name: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
   { name: 'Quiz Leads', href: '/admin/quiz-leads', icon: Sparkles },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },
+  { name: 'Blog', href: '/admin/blog', icon: Video },
   { name: 'Categories', href: '/admin/categories', icon: FolderTree },
   { name: 'Services', href: '/admin/services', icon: Tag },
   { name: 'Industries', href: '/admin/industries', icon: Building2 },

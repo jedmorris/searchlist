@@ -12,6 +12,7 @@ import { SearchBar } from '@/components/forms/SearchBar'
 const navigation = [
   { name: 'Find My Match', href: '/quiz', highlight: true },
   { name: 'Browse Services', href: '/#categories' },
+  { name: 'Blog', href: '/blog' },
   { name: 'Saved', href: '/saved' },
   { name: 'FAQ', href: '/faq' },
 ]
