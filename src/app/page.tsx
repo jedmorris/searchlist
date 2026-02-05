@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CategoryGrid } from '@/components/categories/CategoryGrid'
 import { Typewriter } from '@/components/home/Typewriter'
+import { TestimonialsSection, type TestimonialData } from '@/components/home/TestimonialsSection'
 import { QuizCTA } from '@/components/quiz/QuizCTA'
 import { createClient } from '@/lib/supabase/server'
 import type { Category, Provider } from '@/types/database'
@@ -65,11 +66,69 @@ async function getFeaturedProviders(): Promise<Provider[]> {
   return data as Provider[]
 }
 
+async function getTestimonials(): Promise<TestimonialData[]> {
+  const supabase = await createClient()
+
+  // Fetch approved reviews with high ratings, preferring featured ones
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from('reviews') as any)
+    .select(`
+      id,
+      rating,
+      title,
+      content,
+      author_name,
+      created_at,
+      providers!inner (
+        id,
+        name,
+        slug,
+        company_name
+      )
+    `)
+    .eq('is_approved', true)
+    .gte('rating', 4) // Only show 4+ star reviews
+    .order('is_featured', { ascending: false })
+    .order('rating', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(6)
+
+  if (error || !data) {
+    console.error('Error fetching testimonials:', error)
+    return []
+  }
+
+  // Transform the data to match our expected format
+  return data.map((review: {
+    id: string
+    rating: number
+    title: string | null
+    content: string
+    author_name: string
+    created_at: string
+    providers: {
+      id: string
+      name: string
+      slug: string
+      company_name: string | null
+    }
+  }) => ({
+    id: review.id,
+    rating: review.rating,
+    title: review.title,
+    content: review.content,
+    author_name: review.author_name,
+    created_at: review.created_at,
+    provider: review.providers,
+  }))
+}
+
 export default async function HomePage() {
-  const [categories, providerCounts, featuredProviders] = await Promise.all([
+  const [categories, providerCounts, featuredProviders, testimonials] = await Promise.all([
     getCategories(),
     getProviderCounts(),
     getFeaturedProviders(),
+    getTestimonials(),
   ])
 
   const benefits = [
@@ -205,6 +264,9 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Testimonials Section */}
+      <TestimonialsSection testimonials={testimonials} />
 
       {/* CTA Section */}
       <section className="py-20">
