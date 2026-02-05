@@ -1,4 +1,4 @@
-import type { Provider, Category, Review } from '@/types/database'
+import type { Provider, Review } from '@/types/database'
 import { SITE_CONFIG } from '@/lib/constants'
 
 interface OrganizationJsonLdProps {
