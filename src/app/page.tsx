@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { CategoryGrid } from '@/components/categories/CategoryGrid'
 import { Typewriter } from '@/components/home/Typewriter'
 import { TestimonialsSection, type TestimonialData } from '@/components/home/TestimonialsSection'
+import { TopProvidersSection, type TopProviderData } from '@/components/home/TopProvidersSection'
 import { QuizCTA } from '@/components/quiz/QuizCTA'
 import { createClient } from '@/lib/supabase/server'
 import type { Category, Provider } from '@/types/database'
@@ -66,6 +67,111 @@ async function getFeaturedProviders(): Promise<Provider[]> {
   return data as Provider[]
 }
 
+async function getTopRatedProviders(): Promise<TopProviderData[]> {
+  const supabase = await createClient()
+
+  // Fetch providers with highest average rating (minimum 1 review)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from('providers') as any)
+    .select(`
+      id,
+      name,
+      slug,
+      company_name,
+      tagline,
+      headshot_url,
+      rating_average,
+      rating_count,
+      is_verified
+    `)
+    .eq('is_active', true)
+    .gt('rating_count', 0)
+    .not('rating_average', 'is', null)
+    .order('rating_average', { ascending: false })
+    .order('rating_count', { ascending: false })
+    .limit(6)
+
+  if (error || !data) {
+    console.error('Error fetching top rated providers:', error)
+    return []
+  }
+
+  // Fetch categories for these providers
+  const providerIds = data.map((p: { id: string }) => p.id)
+  const categoriesMap = await getProviderCategories(providerIds)
+
+  return data.map((provider: TopProviderData) => ({
+    ...provider,
+    categories: categoriesMap[provider.id] || [],
+  }))
+}
+
+async function getMostReviewedProviders(): Promise<TopProviderData[]> {
+  const supabase = await createClient()
+
+  // Fetch providers with most reviews
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from('providers') as any)
+    .select(`
+      id,
+      name,
+      slug,
+      company_name,
+      tagline,
+      headshot_url,
+      rating_average,
+      rating_count,
+      is_verified
+    `)
+    .eq('is_active', true)
+    .gt('rating_count', 0)
+    .order('rating_count', { ascending: false })
+    .order('rating_average', { ascending: false })
+    .limit(6)
+
+  if (error || !data) {
+    console.error('Error fetching most reviewed providers:', error)
+    return []
+  }
+
+  // Fetch categories for these providers
+  const providerIds = data.map((p: { id: string }) => p.id)
+  const categoriesMap = await getProviderCategories(providerIds)
+
+  return data.map((provider: TopProviderData) => ({
+    ...provider,
+    categories: categoriesMap[provider.id] || [],
+  }))
+}
+
+async function getProviderCategories(providerIds: string[]): Promise<Record<string, { id: string; name: string; slug: string }[]>> {
+  if (providerIds.length === 0) return {}
+
+  const supabase = await createClient()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase.from('provider_categories') as any)
+    .select('provider_id, categories(id, name, slug)')
+    .in('provider_id', providerIds)
+
+  if (!data) return {}
+
+  return data.reduce(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (acc: Record<string, { id: string; name: string; slug: string }[]>, pc: any) => {
+      const cat = pc.categories as { id: string; name: string; slug: string } | null
+      if (cat) {
+        if (!acc[pc.provider_id]) {
+          acc[pc.provider_id] = []
+        }
+        acc[pc.provider_id].push(cat)
+      }
+      return acc
+    },
+    {}
+  )
+}
+
 async function getTestimonials(): Promise<TestimonialData[]> {
   const supabase = await createClient()
 
@@ -124,11 +230,13 @@ async function getTestimonials(): Promise<TestimonialData[]> {
 }
 
 export default async function HomePage() {
-  const [categories, providerCounts, featuredProviders, testimonials] = await Promise.all([
+  const [categories, providerCounts, featuredProviders, testimonials, topRated, mostReviewed] = await Promise.all([
     getCategories(),
     getProviderCounts(),
     getFeaturedProviders(),
     getTestimonials(),
+    getTopRatedProviders(),
+    getMostReviewedProviders(),
   ])
 
   const benefits = [
@@ -267,6 +375,9 @@ export default async function HomePage() {
 
       {/* Testimonials Section */}
       <TestimonialsSection testimonials={testimonials} />
+
+      {/* Top Providers Section */}
+      <TopProvidersSection topRated={topRated} mostReviewed={mostReviewed} />
 
       {/* CTA Section */}
       <section className="py-20">
