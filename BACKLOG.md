@@ -376,6 +376,14 @@ Let providers embed their Search List profile/reviews on their own website. Widg
 
 ---
 
+### ✅ TECH DEBT CLEANUP (DONE)
+
+- [x] `/portal/setup` page - Shows pending invitations or instructions for providers without linked accounts
+- [x] `.env.local.example` - Comprehensive documentation of all environment variables
+- [x] Stripe configuration documented - All price IDs with suggested pricing
+
+---
+
 ### 🎯 RECOMMENDED NEXT PHASE
 
 #### Phase 4: Engagement & Revenue (Recommended)
@@ -406,10 +414,10 @@ Let providers embed their Search List profile/reviews on their own website. Widg
 ## Technical Debt
 
 - [x] ~~Email integration for invitations~~ (Complete)
-- [ ] `/portal/setup` page (referenced in middleware, not implemented)
+- [x] ~~`/portal/setup` page~~ (Complete - shows pending invitations or instructions)
 - [x] ~~Review notification to providers~~ (Complete)
-- [ ] Stripe price IDs configuration & documentation
-- [ ] Add environment variable documentation (.env.example)
+- [x] ~~Stripe price IDs configuration & documentation~~ (Complete - documented in .env.local.example)
+- [x] ~~Add environment variable documentation (.env.example)~~ (Complete - comprehensive .env.local.example)
 - [ ] Error boundaries and fallback UI
 - [ ] Comprehensive test coverage
 - [ ] Database query optimization & caching
