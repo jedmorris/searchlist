@@ -9,6 +9,7 @@ import { Loader2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { ImageUpload } from '@/components/ui/image-upload'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
@@ -49,6 +50,8 @@ const formSchema = z.object({
   phone: z.string().optional(),
   website: z.string().url().optional().or(z.literal('')),
   linkedin: z.string().url().optional().or(z.literal('')),
+  headshot_url: z.string().url().optional().or(z.literal('')).nullable(),
+  logo_url: z.string().url().optional().or(z.literal('')).nullable(),
   tagline: z.string().max(200).optional(),
   bio: z.string().optional(),
   city: z.string().optional(),
@@ -101,6 +104,8 @@ export function ProviderForm({
       phone: provider?.phone || '',
       website: provider?.website || '',
       linkedin: provider?.linkedin || '',
+      headshot_url: provider?.headshot_url || '',
+      logo_url: provider?.logo_url || '',
       tagline: provider?.tagline || '',
       bio: provider?.bio || '',
       city: provider?.city || '',
@@ -314,6 +319,89 @@ export function ProviderForm({
                 </FormItem>
               )}
             />
+          </CardContent>
+        </Card>
+
+        {/* Photos */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Photos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="headshot_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Headshot</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        onUpload={async (file) => {
+                          const formData = new FormData()
+                          formData.append('file', file)
+                          formData.append('folder', 'headshots')
+                          const res = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData,
+                          })
+                          if (!res.ok) {
+                            const err = await res.json()
+                            throw new Error(err.error || 'Upload failed')
+                          }
+                          const data = await res.json()
+                          return data.url
+                        }}
+                        aspectRatio="square"
+                        label="Upload Headshot"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Professional photo of the provider
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="logo_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Logo</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        onUpload={async (file) => {
+                          const formData = new FormData()
+                          formData.append('file', file)
+                          formData.append('folder', 'logos')
+                          const res = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData,
+                          })
+                          if (!res.ok) {
+                            const err = await res.json()
+                            throw new Error(err.error || 'Upload failed')
+                          }
+                          const data = await res.json()
+                          return data.url
+                        }}
+                        aspectRatio="square"
+                        label="Upload Logo"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Company or business logo
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </CardContent>
         </Card>
 

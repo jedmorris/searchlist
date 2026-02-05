@@ -92,7 +92,23 @@ export function formatDealSizeRange(min: number | null, max: number | null): str
 
 // Site metadata
 export const SITE_CONFIG = {
-  name: 'ETA Services Directory',
+  name: 'Search List',
   description: 'Find trusted service providers for your business acquisition journey. Connect with M&A attorneys, QoE providers, SBA lenders, and more.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://etadirectory.com',
 } as const
+
+// Quiz configuration
+export const QUIZ_DEAL_SIZES = [
+  { value: 'under-500k', label: 'Under $500K', description: 'Small business acquisitions' },
+  { value: '500k-1m', label: '$500K - $1M', description: 'Lower middle market' },
+  { value: '1m-5m', label: '$1M - $5M', description: 'Middle market' },
+  { value: '5m-10m', label: '$5M - $10M', description: 'Upper middle market' },
+  { value: '10m-plus', label: '$10M+', description: 'Large transactions' },
+] as const
+
+export const QUIZ_TIMELINES = [
+  { value: 'immediate', label: 'Ready now', description: 'I need help immediately' },
+  { value: '1-3-months', label: '1-3 months', description: 'Starting the process soon' },
+  { value: '3-6-months', label: '3-6 months', description: 'In the planning stages' },
+  { value: '6-plus-months', label: '6+ months', description: 'Just exploring options' },
+] as const

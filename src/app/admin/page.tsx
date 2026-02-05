@@ -82,7 +82,7 @@ export default async function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">
-          Overview of your ETA Services Directory
+          Overview of your Search List
         </p>
       </div>
 

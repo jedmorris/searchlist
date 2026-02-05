@@ -3,6 +3,7 @@ import { MapPin, Wifi, BadgeCheck, Star } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { StarRatingDisplay } from '@/components/reviews/StarRating'
 import { formatDealSizeRange } from '@/lib/constants'
 import type { Provider, Category } from '@/types/database'
 
@@ -51,6 +52,16 @@ export function ProviderCard({ provider }: ProviderCardProps) {
             <p className="mt-4 text-sm text-muted-foreground line-clamp-2">
               {provider.tagline}
             </p>
+          )}
+
+          {(provider.rating_average !== null && provider.rating_average !== undefined) && (
+            <div className="mt-3">
+              <StarRatingDisplay
+                rating={provider.rating_average}
+                count={provider.rating_count}
+                size="sm"
+              />
+            </div>
           )}
 
           <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

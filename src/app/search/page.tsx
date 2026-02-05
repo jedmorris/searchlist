@@ -16,7 +16,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return {
     title: q ? `Search: ${q}` : 'Search',
     description: q
-      ? `Search results for "${q}" in ETA Services Directory`
+      ? `Search results for "${q}" in Search List`
       : 'Search for service providers',
   }
 }
@@ -73,7 +73,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
           <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-6">
             <Search className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h1 className="text-2xl font-bold mb-4">Search ETA Directory</h1>
+          <h1 className="text-2xl font-bold mb-4">Search Search List</h1>
           <p className="text-muted-foreground">
             Enter a search term to find service providers, categories, or
             locations.

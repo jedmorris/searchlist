@@ -1,14 +1,19 @@
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, Users, MessageSquare, FolderTree, LogOut } from 'lucide-react'
+import { headers } from 'next/headers'
+import { LayoutDashboard, Users, MessageSquare, FolderTree, LogOut, UserCog, Tag, BarChart3, Mail, Star } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 
 const adminNav = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'Providers', href: '/admin/providers', icon: Users },
   { name: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
+  { name: 'Reviews', href: '/admin/reviews', icon: Star },
   { name: 'Categories', href: '/admin/categories', icon: FolderTree },
+  { name: 'Services', href: '/admin/services', icon: Tag },
+  { name: 'Invitations', href: '/admin/invitations', icon: Mail },
+  { name: 'Admin Users', href: '/admin/users', icon: UserCog },
 ]
 
 export default async function AdminLayout({
@@ -17,28 +22,18 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
+  const headersList = await headers()
+
+  // Get the current URL from headers
+  const url = headersList.get('x-url') || headersList.get('referer') || ''
+  const isLoginPage = url.includes('/admin/login')
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Allow access to login page without auth
-  const isLoginPage =
-    typeof window === 'undefined'
-      ? false
-      : window.location.pathname === '/admin/login'
-
-  if (!user && !isLoginPage) {
-    // Check if this is being rendered server-side
-    const headers = await import('next/headers').then((mod) => mod.headers())
-    const pathname = headers.get('x-pathname') || ''
-    if (pathname !== '/admin/login') {
-      redirect('/admin/login')
-    }
-  }
-
-  // For login page, render without admin layout
-  if (!user) {
+  // For login page, render without admin layout (middleware handles auth redirect)
+  if (!user || isLoginPage) {
     return <>{children}</>
   }
 

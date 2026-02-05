@@ -79,14 +79,14 @@ export async function POST(request: Request) {
 
       try {
         await resend.emails.send({
-          from: 'ETA Directory <noreply@etadirectory.com>',
+          from: 'Search List <noreply@searchlist.com>',
           to: provider.email,
-          subject: `New Inquiry from ${sender_name} via ETA Directory`,
+          subject: `New Inquiry from ${sender_name} via Search List`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #333;">New Inquiry from ETA Directory</h2>
+              <h2 style="color: #333;">New Inquiry from Search List</h2>
               <p>Hi ${provider.name.split(' ')[0]},</p>
-              <p>You have received a new inquiry through ETA Directory:</p>
+              <p>You have received a new inquiry through Search List:</p>
 
               <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
                 <p><strong>From:</strong> ${sender_name}</p>
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
 
               <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0 15px;" />
               <p style="color: #666; font-size: 12px;">
-                This message was sent via ETA Services Directory.
+                This message was sent via Search List.
                 You're receiving this because you're listed as a provider.
               </p>
             </div>
@@ -120,9 +120,9 @@ export async function POST(request: Request) {
     if (resend && process.env.ADMIN_EMAIL) {
       try {
         await resend.emails.send({
-          from: 'ETA Directory <noreply@etadirectory.com>',
+          from: 'Search List <noreply@searchlist.com>',
           to: process.env.ADMIN_EMAIL,
-          subject: `[ETA Directory] New inquiry for ${provider.name}`,
+          subject: `[Search List] New inquiry for ${provider.name}`,
           html: `
             <div style="font-family: sans-serif;">
               <p>New inquiry submitted:</p>

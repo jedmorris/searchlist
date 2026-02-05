@@ -81,7 +81,7 @@ export function Footer() {
 
         <div className="mt-12 border-t pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-sm text-muted-foreground">
-            {new Date().getFullYear()} ETA Services Directory. All rights
+            {new Date().getFullYear()} Search List. All rights
             reserved.
           </p>
           <div className="flex space-x-6">

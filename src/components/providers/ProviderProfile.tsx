@@ -7,25 +7,34 @@ import {
   Clock,
   Globe,
   Linkedin,
+  MessageSquare,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { InquiryForm } from '@/components/forms/InquiryForm'
+import { StarRatingDisplay } from '@/components/reviews/StarRating'
+import { ReviewForm } from '@/components/reviews/ReviewForm'
+import { ReviewList } from '@/components/reviews/ReviewList'
+import { ReviewSummary } from '@/components/reviews/ReviewSummary'
 import { formatDealSizeRange } from '@/lib/constants'
-import type { Provider, Category, Service } from '@/types/database'
+import type { Provider, Category, Service, Review } from '@/types/database'
 
 interface ProviderProfileProps {
   provider: Provider
   categories: Category[]
   services: Service[]
+  reviews?: Review[]
+  ratingDistribution?: Record<number, number>
 }
 
 export function ProviderProfile({
   provider,
   categories,
   services,
+  reviews = [],
+  ratingDistribution,
 }: ProviderProfileProps) {
   const initials = provider.name
     .split(' ')
@@ -73,6 +82,14 @@ export function ProviderProfile({
 
             {provider.tagline && (
               <p className="text-muted-foreground">{provider.tagline}</p>
+            )}
+
+            {(provider.rating_average !== null && provider.rating_average !== undefined) && (
+              <StarRatingDisplay
+                rating={provider.rating_average}
+                count={provider.rating_count}
+                size="md"
+              />
             )}
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
@@ -159,6 +176,51 @@ export function ProviderProfile({
             </div>
           </section>
         )}
+
+        {/* Reviews Section */}
+        <section id="reviews">
+          <Separator className="my-8" />
+          <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            Reviews
+            {provider.rating_count > 0 && (
+              <span className="text-sm font-normal text-muted-foreground">
+                ({provider.rating_count})
+              </span>
+            )}
+          </h2>
+
+          {/* Rating Summary */}
+          {provider.rating_count > 0 && (
+            <Card className="mb-6">
+              <CardContent className="pt-6">
+                <ReviewSummary
+                  ratingAverage={provider.rating_average}
+                  ratingCount={provider.rating_count}
+                  ratingDistribution={ratingDistribution}
+                />
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Reviews List */}
+          <div className="mb-8">
+            <ReviewList reviews={reviews} />
+          </div>
+
+          {/* Write a Review */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Write a Review</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ReviewForm
+                providerId={provider.id}
+                providerName={provider.name}
+              />
+            </CardContent>
+          </Card>
+        </section>
       </div>
 
       {/* Sidebar */}

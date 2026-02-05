@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Learn about ETA Services Directory - connecting entrepreneurs with trusted service providers for business acquisitions.',
+    'Learn about Search List - connecting entrepreneurs with trusted service providers for business acquisitions.',
 }
 
 export default function AboutPage() {
@@ -45,7 +45,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-              About ETA Services Directory
+              About Search List
             </h1>
             <p className="text-xl text-muted-foreground">
               Connecting entrepreneurs with trusted professionals who understand
@@ -67,7 +67,7 @@ export default function AboutPage() {
                 nuances of lower middle market transactions can be challenging.
               </p>
               <p>
-                We created ETA Services Directory to solve this problem. Our
+                We created Search List to solve this problem. Our
                 curated directory features professionals who have demonstrated
                 experience working with search fund entrepreneurs, independent
                 sponsors, and small business acquirers.
@@ -131,7 +131,7 @@ export default function AboutPage() {
                   about your practice and experience in the ETA space.
                 </p>
                 <Button asChild>
-                  <a href="mailto:hello@etadirectory.com">
+                  <a href="mailto:hello@searchlist.com">
                     Contact Us to Apply
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>

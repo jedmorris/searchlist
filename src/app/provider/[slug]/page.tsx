@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react'
 import { ProviderProfile } from '@/components/providers/ProviderProfile'
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
-import type { Provider, Category, Service } from '@/types/database'
+import type { Provider, Category, Service, Review } from '@/types/database'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -48,6 +48,32 @@ async function getProviderServices(providerId: string): Promise<Service[]> {
   return data.map((d: { services: Service | null }) => d.services).filter(Boolean) as Service[]
 }
 
+async function getProviderReviews(providerId: string): Promise<{
+  reviews: Review[]
+  ratingDistribution: Record<number, number>
+}> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('provider_id', providerId)
+    .eq('is_approved', true)
+    .order('is_featured', { ascending: false })
+    .order('helpful_count', { ascending: false })
+    .order('created_at', { ascending: false })
+
+  if (error || !data) return { reviews: [], ratingDistribution: {} }
+
+  // Calculate rating distribution
+  const ratingDistribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  data.forEach((review: Review) => {
+    ratingDistribution[review.rating] = (ratingDistribution[review.rating] || 0) + 1
+  })
+
+  return { reviews: data as Review[], ratingDistribution }
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const provider = await getProvider(slug)
@@ -74,9 +100,10 @@ export default async function ProviderPage({ params }: PageProps) {
     notFound()
   }
 
-  const [categories, services] = await Promise.all([
+  const [categories, services, reviewsData] = await Promise.all([
     getProviderCategories(provider.id),
     getProviderServices(provider.id),
+    getProviderReviews(provider.id),
   ])
 
   const primaryCategory = categories[0]
@@ -104,6 +131,8 @@ export default async function ProviderPage({ params }: PageProps) {
         provider={provider}
         categories={categories}
         services={services}
+        reviews={reviewsData.reviews}
+        ratingDistribution={reviewsData.ratingDistribution}
       />
     </div>
   )

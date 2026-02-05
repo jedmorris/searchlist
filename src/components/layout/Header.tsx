@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { SearchBar } from '@/components/forms/SearchBar'
 
 const navigation = [
+  { name: 'Find My Match', href: '/quiz', highlight: true },
   { name: 'Browse Services', href: '/#categories' },
   { name: 'About', href: '/about' },
 ]
@@ -24,7 +25,7 @@ export function Header() {
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-primary">ETA Directory</span>
+          <span className="text-xl font-bold text-primary">Search List</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -34,10 +35,13 @@ export function Header() {
               key={item.name}
               href={item.href}
               className={cn(
-                'text-sm font-medium transition-colors hover:text-primary',
+                'text-sm font-medium transition-colors',
+                item.highlight
+                  ? 'text-primary hover:text-primary/80'
+                  : 'hover:text-primary',
                 pathname === item.href
                   ? 'text-primary'
-                  : 'text-muted-foreground'
+                  : !item.highlight && 'text-muted-foreground'
               )}
             >
               {item.name}
@@ -84,6 +88,8 @@ export function Header() {
                       'text-lg font-medium transition-colors hover:text-primary p-2 rounded-md',
                       pathname === item.href
                         ? 'text-primary bg-primary/10'
+                        : item.highlight
+                        ? 'text-primary'
                         : 'text-muted-foreground'
                     )}
                   >

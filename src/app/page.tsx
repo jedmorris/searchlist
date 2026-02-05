@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CategoryGrid } from '@/components/categories/CategoryGrid'
 import { Typewriter } from '@/components/home/Typewriter'
+import { QuizCTA } from '@/components/quiz/QuizCTA'
 import { createClient } from '@/lib/supabase/server'
 import type { Category, Provider } from '@/types/database'
 
@@ -109,13 +110,16 @@ export default async function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button size="lg" asChild>
+                <Link href="/quiz">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Find My Match
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
                 <Link href="/#categories">
                   Browse Services
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/about">Learn More</Link>
               </Button>
             </div>
           </div>
@@ -135,6 +139,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Quiz CTA Section */}
+      <QuizCTA />
 
       {/* Categories Section */}
       <section id="categories" className="py-20">
@@ -157,7 +164,7 @@ export default async function HomePage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Featured Providers</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Trusted professionals with proven track records in the ETA space.
+                Trusted professionals with proven track records in the search fund space.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -207,7 +214,7 @@ export default async function HomePage() {
               Are You a Service Provider?
             </h2>
             <p className="text-muted-foreground">
-              Join our curated directory of professionals serving the ETA and
+              Join our curated directory of professionals serving the search fund and
               lower middle market acquisition space. Reach entrepreneurs actively
               looking for your services.
             </p>
